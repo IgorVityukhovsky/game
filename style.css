@@ -112,15 +112,20 @@ td.used {
 #questionScreen {
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(circle, rgba(40,25,15,0.95), rgba(10,5,2,0.98));
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 40px;
-  text-align: center;
-  z-index: 10;
+  align-items: center;
+  z-index: 1000;
+
+  /* ВАЖНО */
+  pointer-events: none;
+  opacity: 0;
+}
+
+#questionScreen.active {
+  pointer-events: auto;
+  opacity: 1;
 }
 
 /* === ТЕКСТ ВОПРОСА === */
@@ -149,4 +154,26 @@ td.used {
 /* === СКРЫТИЕ === */
 .hidden {
   display: none;
+}
+
+/* ====== ФИКС КЛИКАБЕЛЬНОСТИ ====== */
+
+/* Ячейки с вопросами всегда кликабельны */
+#board td {
+  pointer-events: auto;
+}
+
+/* Использованные вопросы — не кликабельны */
+#board td.used {
+  pointer-events: none;
+}
+
+/* Кнопки всегда кликабельны */
+button {
+  pointer-events: auto;
+}
+
+/* Экран вопроса не блокирует клики, когда скрыт */
+#questionScreen.hidden {
+  pointer-events: none;
 }
