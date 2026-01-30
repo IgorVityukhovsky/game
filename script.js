@@ -65,13 +65,18 @@ function renderPlayers() {
 
 function openQuestion(cat, index) {
   currentQuestion = { cat, index };
-  questionScreen.classList.remove('hidden');
-  board.classList.add('hidden');
+  questionScreen.classList.add('active'); // экран видим и ловит клики
+  board.classList.add('hidden');          // таблица скрыта
 
   document.getElementById('questionText').textContent = questions[cat][index];
   document.getElementById('questionPoints').textContent = POINTS[index] + ' очков';
   document.getElementById('answer').innerHTML = '';
 }
+
+document.getElementById('back').onclick = () => {
+  questionScreen.classList.remove('active');
+  board.classList.remove('hidden');
+};
 
 async function showAnswer() {
   const { cat, index } = currentQuestion;
@@ -86,7 +91,7 @@ function finish(correct) {
   used[cat][index] = true;
   currentPlayer = (currentPlayer + 1) % players.length;
 
-  questionScreen.classList.add('hidden');
+  questionScreen.classList.remove('active');
   board.classList.remove('hidden');
 
   renderBoard();
@@ -97,7 +102,7 @@ document.getElementById('showAnswer').onclick = showAnswer;
 document.getElementById('correct').onclick = () => finish(true);
 document.getElementById('wrong').onclick = () => finish(false);
 document.getElementById('back').onclick = () => {
-  questionScreen.classList.add('hidden');
+  questionScreen.classList.remove('active');
   board.classList.remove('hidden');
 };
 
