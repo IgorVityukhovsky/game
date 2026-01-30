@@ -1,39 +1,152 @@
+/* === ОБЩИЙ ФОН === */
 body {
-  font-family: Arial, sans-serif;
-  background: #111;
-  color: #fff;
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Georgia", "Times New Roman", serif;
+  background:
+    radial-gradient(circle at top, #2b1b0f 0%, #0b0603 70%);
+  color: #f5e6c8;
 }
 
-table {
-  border-collapse: collapse;
+/* === ЗАГОЛОВОК === */
+h1 {
+  text-align: center;
+  font-size: 64px;
+  margin: 30px 0 20px;
+  color: #f6d98b;
+  text-shadow:
+    0 0 10px rgba(255, 200, 100, 0.6),
+    0 0 30px rgba(255, 140, 0, 0.4);
+}
+
+/* === КНОПКИ === */
+button {
+  background: linear-gradient(180deg, #5c3b1e, #2a160a);
+  border: 2px solid #d4af37;
+  color: #f6e3a1;
+  padding: 10px 18px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 6px;
+  box-shadow:
+    inset 0 0 10px rgba(0,0,0,0.6),
+    0 0 10px rgba(212,175,55,0.3);
+}
+
+button:hover {
+  background: linear-gradient(180deg, #7a522b, #3a1f0d);
+}
+
+/* === ИГРОВОЕ ПОЛЕ === */
+#gameBoard {
+  display: flex;
+  justify-content: center;
   margin-top: 20px;
 }
 
+/* === ТАБЛИЦА === */
+table {
+  border-collapse: collapse;
+  background: rgba(30, 18, 10, 0.85);
+  box-shadow:
+    0 0 40px rgba(0,0,0,0.8),
+    inset 0 0 30px rgba(255,200,120,0.08);
+  border: 3px solid #7a5a2a;
+}
+
+/* === ЯЧЕЙКИ === */
 td {
-  border: 1px solid #555;
-  padding: 10px;
+  min-width: 90px;
+  height: 60px;
+  border: 1px solid #7a5a2a;
   text-align: center;
+  font-size: 22px;
+  color: #f6d98b;
   cursor: pointer;
+  text-shadow: 0 0 5px rgba(255,200,120,0.5);
 }
 
+/* === КАТЕГОРИИ === */
 td.category {
+  padding: 0 15px;
   font-weight: bold;
-  background: #222;
+  background: linear-gradient(180deg, #3b2414, #1a0f07);
+  color: #ffd700;
+  text-shadow: 0 0 8px rgba(255,215,0,0.6);
 }
 
+/* === ЯЧЕЙКА ПРИ НАВЕДЕНИИ === */
+td:hover:not(.used):not(.category) {
+  background: radial-gradient(circle, #6b4a1e, #2a160a);
+  box-shadow: inset 0 0 15px rgba(255,200,120,0.6);
+}
+
+/* === СЫГРАННЫЕ ВОПРОСЫ === */
 td.used {
-  background: #333;
+  background: rgba(10, 5, 2, 0.9);
+  color: rgba(255,215,0,0.2);
   cursor: default;
+  text-shadow: none;
 }
 
-.hidden {
-  display: none;
+/* === ИГРОКИ === */
+#players {
+  margin-top: 20px;
+  text-align: center;
 }
 
 #players div {
-  margin-top: 5px;
+  font-size: 22px;
+  margin: 5px 0;
 }
 
-.active {
-  color: yellow;
+/* === АКТИВНЫЙ ИГРОК === */
+#players .active {
+  color: #ffd700;
+  text-shadow:
+    0 0 8px rgba(255,215,0,0.8),
+    0 0 20px rgba(255,140,0,0.5);
+}
+
+/* === ЭКРАН ВОПРОСА === */
+#questionScreen {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle, rgba(40,25,15,0.95), rgba(10,5,2,0.98));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  z-index: 10;
+}
+
+/* === ТЕКСТ ВОПРОСА === */
+#questionText {
+  font-size: 42px;
+  margin-bottom: 20px;
+  color: #f6e3a1;
+  text-shadow:
+    0 0 10px rgba(255,200,120,0.6);
+}
+
+/* === ОЧКИ === */
+#questionPoints {
+  font-size: 26px;
+  margin-bottom: 30px;
+  color: #ffd700;
+}
+
+/* === ОТВЕТ === */
+#answer {
+  margin: 20px 0;
+  font-size: 28px;
+  color: #fff2c9;
+}
+
+/* === СКРЫТИЕ === */
+.hidden {
+  display: none;
 }
