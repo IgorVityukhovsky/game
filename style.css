@@ -1,0 +1,39 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #fff;
+}
+
+table {
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+td {
+  border: 1px solid #555;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+td.category {
+  font-weight: bold;
+  background: #222;
+}
+
+td.used {
+  background: #333;
+  cursor: default;
+}
+
+.hidden {
+  display: none;
+}
+
+#players div {
+  margin-top: 5px;
+}
+
+.active {
+  color: yellow;
+}
