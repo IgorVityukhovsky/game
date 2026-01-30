@@ -128,6 +128,26 @@ td.used {
   opacity: 1;
 }
 
+/* === КАРТОЧКА ВОПРОСА === */
+#questionCard {
+  background: radial-gradient(circle at top, #3b2414, #120a05);
+  border: 3px solid #d4af37;
+  padding: 40px;
+  max-width: 800px;
+  text-align: center;
+  box-shadow:
+    0 0 40px rgba(0,0,0,0.9),
+    inset 0 0 30px rgba(255,200,120,0.15);
+}
+
+#answer {
+  margin: 25px 0;
+  font-size: 30px;
+  color: #00ffcc;
+  text-shadow: 0 0 10px rgba(0,255,200,0.8);
+}
+
+
 /* === ТЕКСТ ВОПРОСА === */
 #questionText {
   font-size: 42px;
