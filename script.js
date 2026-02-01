@@ -121,15 +121,29 @@ function showStealPlayers() {
   container.id = 'stealPlayers';
   container.innerHTML = '<h3>Кто отвечает?</h3>';
 
+  // Вариант "никто"
+  const labelNone = document.createElement('label');
+  const radioNone = document.createElement('input');
+  radioNone.type = 'radio';
+  radioNone.name = 'steal';
+  radioNone.value = 'none';
+  radioNone.checked = true;
+  labelNone.appendChild(radioNone);
+  labelNone.append(' Никто');
+  container.appendChild(labelNone);
+  container.appendChild(document.createElement('br'));
+
+  // Остальные игроки, кто ещё не отвечал
   players.forEach((p, i) => {
     if (answeredPlayers.includes(i)) return;
 
     const label = document.createElement('label');
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.value = i;
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'steal';
+    radio.value = i;
 
-    label.appendChild(checkbox);
+    label.appendChild(radio);
     label.append(` ${p.name}`);
     container.appendChild(label);
     container.appendChild(document.createElement('br'));
@@ -145,21 +159,21 @@ function showStealPlayers() {
 
 // ---------- Выбор игрока ----------
 function selectStealPlayer(container) {
-  const checked = [...container.querySelectorAll('input:checked')]
-    .map(i => Number(i.value));
-
-  if (checked.length === 0) {
-    alert('Выбери хотя бы одного игрока');
+  const selected = container.querySelector('input[name="steal"]:checked');
+  if (!selected) {
+    alert('Выберите вариант');
     return;
   }
 
-  currentAnswerPlayer =
-    checked.length === 1
-      ? checked[0]
-      : checked[Math.floor(Math.random() * checked.length)];
-
-  answeredPlayers.push(currentAnswerPlayer);
-  awaitingSteal = true;
+  if (selected.value === 'none') {
+    // Никто не отвечает — закрываем вопрос сразу
+    finish(false); // автоматически помечает как использованный
+    awaitingSteal = false;
+  } else {
+    currentAnswerPlayer = Number(selected.value);
+    answeredPlayers.push(currentAnswerPlayer);
+    awaitingSteal = true;
+  }
 
   container.remove();
   updateQuestionInfo();
@@ -177,8 +191,10 @@ function finish(correct) {
     players[currentAnswerPlayer].score += pts;
   }
 
+  // помечаем вопрос как использованный
   used[cat][index] = true;
 
+  // ход переходит по очереди
   currentTurnPlayer = (currentTurnPlayer + 1) % players.length;
 
   questionScreen.classList.remove('active');
@@ -213,7 +229,6 @@ document.getElementById('wrong').onclick = () => {
     .filter(i => !answeredPlayers.includes(i));
 
   if (remaining.length > 0) {
-    awaitingSteal = true;
     showStealPlayers();
     renderPlayers();
   } else {
