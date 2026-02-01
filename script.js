@@ -166,9 +166,9 @@ function selectStealPlayer(container) {
   }
 
   if (selected.value === 'none') {
-    // Никто не отвечает — закрываем вопрос сразу
-    finish(false); // автоматически помечает как использованный
+    // Никто не отвечает — закрываем вопрос сразу, порядок игроков останется корректным
     awaitingSteal = false;
+    finish(false); // автоматическое закрытие и пометка вопроса
   } else {
     currentAnswerPlayer = Number(selected.value);
     answeredPlayers.push(currentAnswerPlayer);
@@ -196,6 +196,9 @@ function finish(correct) {
 
   // ход переходит по очереди
   currentTurnPlayer = (currentTurnPlayer + 1) % players.length;
+
+  // текущий отвечающий теперь совпадает с игроком, чей ход следующий
+  currentAnswerPlayer = currentTurnPlayer;
 
   questionScreen.classList.remove('active');
   board.classList.remove('hidden');
