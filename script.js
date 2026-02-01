@@ -4,21 +4,25 @@ let categories = ['Заклинания', 'Квиддич', 'Персонажи'
 let questions = {};
 let used = {};
 let players = [];
-let currentPlayer = 0;
+
+let currentTurnPlayer = 0;    // чей ход по очереди
+let currentAnswerPlayer = 0;  // кто отвечает сейчас
 let currentQuestion = null;
+
+let awaitingSteal = false;
 
 const board = document.getElementById('gameBoard');
 const playersDiv = document.getElementById('players');
 const questionScreen = document.getElementById('questionScreen');
 const answerEl = document.getElementById('answer');
 
-// --- Загрузка игроков ---
+// ---------- Загрузка игроков ----------
 async function loadPlayers() {
   const text = await fetch('players.txt').then(r => r.text());
   players = text.trim().split('\n').map(name => ({ name, score: 0 }));
 }
 
-// --- Загрузка вопросов ---
+// ---------- Загрузка вопросов ----------
 async function loadQuestions() {
   for (const cat of categories) {
     const text = await fetch(`Вопросы/Категории/${cat}/Вопросы.txt`).then(r => r.text());
@@ -27,7 +31,7 @@ async function loadQuestions() {
   }
 }
 
-// --- Отрисовка игрового поля ---
+// ---------- Отрисовка поля ----------
 function renderBoard() {
   board.innerHTML = '';
   const table = document.createElement('table');
@@ -57,84 +61,178 @@ function renderBoard() {
   board.appendChild(table);
 }
 
-// --- Отрисовка игроков ---
+// ---------- Отрисовка игроков ----------
 function renderPlayers() {
   playersDiv.innerHTML = '';
   players.forEach((p, i) => {
     const div = document.createElement('div');
     div.textContent = `${p.name}: ${p.score}`;
-    if (i === currentPlayer) div.classList.add('active');
+
+    if (i === currentTurnPlayer) div.classList.add('active');
+
     playersDiv.appendChild(div);
   });
 }
 
-// --- Открытие вопроса ---
-function openQuestion(cat, index) {
-  currentQuestion = { cat, index };
+// ---------- Информация о вопросе ----------
+function updateQuestionInfo() {
+  if (!currentQuestion) return;
 
-  questionScreen.classList.add('active'); // показываем экран вопроса
-  board.classList.add('hidden');          // скрываем доску
-
-  document.getElementById('questionText').textContent = questions[cat][index];
-  document.getElementById('questionPoints').textContent = POINTS[index] + ' очков';
-
-  // очищаем и скрываем предыдущий ответ
-  answerEl.textContent = '';
-  answerEl.style.display = 'none';
+  const { index } = currentQuestion;
+  document.getElementById('questionPoints').textContent =
+    `${POINTS[index]} очков — отвечает: ${players[currentAnswerPlayer].name}`;
 }
 
-// --- Показ правильного ответа ---
+// ---------- Открытие вопроса ----------
+function openQuestion(cat, index) {
+  currentQuestion = { cat, index };
+  awaitingSteal = false;
+
+  currentAnswerPlayer = currentTurnPlayer;
+
+  questionScreen.classList.add('active');
+  board.classList.add('hidden');
+
+  document.getElementById('questionText').textContent = questions[cat][index];
+  updateQuestionInfo();
+
+  answerEl.textContent = '';
+  answerEl.style.display = 'none';
+
+  const steal = document.getElementById('stealPlayers');
+  if (steal) steal.remove();
+}
+
+// ---------- Показ ответа ----------
 async function showAnswer() {
-  if (!currentQuestion) return; // защита от клика без выбранного вопроса
+  if (!currentQuestion) return;
   const { cat, index } = currentQuestion;
   const text = await fetch(`Вопросы/Категории/${cat}/Ответ${index + 1}.txt`).then(r => r.text());
   answerEl.textContent = text;
   answerEl.style.display = 'block';
 }
 
-// --- Завершение вопроса и начисление очков ---
+// ---------- Выбор игроков для перехвата ----------
+function showStealPlayers() {
+  const container = document.createElement('div');
+  container.id = 'stealPlayers';
+  container.innerHTML = '<h3>Кто отвечает?</h3>';
+
+  players.forEach((p, i) => {
+    if (i === currentAnswerPlayer) return;
+
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = i;
+
+    label.appendChild(checkbox);
+    label.append(` ${p.name}`);
+    container.appendChild(label);
+    container.appendChild(document.createElement('br'));
+  });
+
+  const btn = document.createElement('button');
+  btn.textContent = 'Выбрать';
+  btn.onclick = () => selectStealPlayer(container);
+
+  container.appendChild(btn);
+  questionScreen.appendChild(container);
+}
+
+// ---------- Выбор игрока ----------
+function selectStealPlayer(container) {
+  const checked = [...container.querySelectorAll('input:checked')]
+    .map(i => Number(i.value));
+
+  if (checked.length === 0) {
+    alert('Выбери хотя бы одного игрока');
+    return;
+  }
+
+  currentAnswerPlayer =
+    checked.length === 1
+      ? checked[0]
+      : checked[Math.floor(Math.random() * checked.length)];
+
+  awaitingSteal = true;
+
+  container.remove();
+  updateQuestionInfo();
+}
+
+// ---------- Завершение вопроса ----------
 function finish(correct) {
   if (!currentQuestion) return;
 
   const { cat, index } = currentQuestion;
   const pts = POINTS[index];
-  players[currentPlayer].score += correct ? pts : -pts;
+
+  players[currentAnswerPlayer].score += correct ? pts : -pts;
   used[cat][index] = true;
 
-  // переключаем игрока
-  currentPlayer = (currentPlayer + 1) % players.length;
+  // ход переходит ПО ОЧЕРЕДИ, а не от отвечающего
+  currentTurnPlayer = (currentTurnPlayer + 1) % players.length;
 
-  // возвращаемся к доске
   questionScreen.classList.remove('active');
   board.classList.remove('hidden');
+
+  awaitingSteal = false;
+
+  const steal = document.getElementById('stealPlayers');
+  if (steal) steal.remove();
 
   renderBoard();
   renderPlayers();
 
-  currentQuestion = null; // сброс текущего вопроса
+  currentQuestion = null;
 }
 
-// --- Назначение обработчиков кнопок ---
+// ---------- Кнопки ----------
 document.getElementById('showAnswer').onclick = showAnswer;
+
 document.getElementById('correct').onclick = () => finish(true);
-document.getElementById('wrong').onclick = () => finish(false);
+
+document.getElementById('wrong').onclick = () => {
+  if (!currentQuestion) return;
+
+  const { index } = currentQuestion;
+
+  if (!awaitingSteal) {
+    players[currentAnswerPlayer].score -= POINTS[index];
+    awaitingSteal = true;
+    showStealPlayers();
+    renderPlayers();
+  } else {
+    finish(false);
+  }
+};
+
 document.getElementById('back').onclick = () => {
   questionScreen.classList.remove('active');
   board.classList.remove('hidden');
   answerEl.textContent = '';
   answerEl.style.display = 'none';
-};
-document.getElementById('newGame').onclick = async () => start();
+  awaitingSteal = false;
 
-// --- Старт игры ---
+  const steal = document.getElementById('stealPlayers');
+  if (steal) steal.remove();
+};
+
+document.getElementById('newGame').onclick = () => start();
+
+// ---------- Старт ----------
 async function start() {
   await loadPlayers();
   await loadQuestions();
+
+  currentTurnPlayer = 0;
+  currentAnswerPlayer = 0;
+  currentQuestion = null;
+  awaitingSteal = false;
+
   renderBoard();
   renderPlayers();
-  currentPlayer = 0;
-  currentQuestion = null;
 }
 
-// --- Запуск ---
 start();
