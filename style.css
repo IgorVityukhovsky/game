@@ -172,7 +172,7 @@ td.used {
   align-items: flex-start;
   gap: 20px;
   z-index: 500;
-  pointer-events: none; /* контейнер не мешает кликам */
+  pointer-events: none;
 }
 
 /* Каждый игрок — колонка */
@@ -180,32 +180,32 @@ td.used {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
   min-width: 80px;
-  pointer-events: auto; /* кнопки внутри кликабельны */
+  pointer-events: auto;
 }
 
 /* Имя игрока */
 #players .player-row span.name {
-  font-size: 20px;
+  font-size: 26px; /* увеличено */
   font-weight: bold;
   color: #f6d98b; /* обычный цвет */
-  text-shadow: 0 0 5px rgba(255,200,120,0.5);
+  text-shadow: 0 0 6px rgba(255,200,120,0.5);
   text-align: center;
 }
 
 /* Активный игрок */
 #players .player-row span.name.active {
-  color: #ffd700;
+  color: #ffff70; /* ярко-жёлтый */
   font-weight: bold;
   text-shadow:
-    0 0 8px rgba(255,215,0,0.8),
-    0 0 20px rgba(255,140,0,0.5);
+    0 0 10px rgba(255,255,112,0.9),
+    0 0 25px rgba(255,255,150,0.6);
 }
 
 /* Очки под именем */
 #players .player-row span.points {
-  font-size: 18px;
+  font-size: 22px; /* увеличено */
   color: #f6e3a1;
   margin-top: 5px;
 }
@@ -213,7 +213,7 @@ td.used {
 /* Кнопки + и - горизонтально под очками */
 #players .player-row .buttons {
   display: flex;
-  flex-direction: row; /* обязательно горизонтально */
+  flex-direction: row;
   gap: 5px;
   margin-top: 5px;
 }
@@ -233,3 +233,4 @@ td.used {
 #players .player-row .buttons button:hover {
   background: linear-gradient(180deg, #7a522b, #3a1f0d);
 }
+
