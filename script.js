@@ -63,16 +63,41 @@ function renderBoard() {
   board.appendChild(table);
 }
 
-// ---------- Отрисовка игроков ----------
+// ---------- Отрисовка игроков с кнопками + и - ----------
 function renderPlayers() {
   playersDiv.innerHTML = '';
   players.forEach((p, i) => {
     const div = document.createElement('div');
-    div.textContent = `${p.name}: ${p.score}`;
-    if (i === currentAnswerPlayer) div.classList.add('active');
+    div.className = 'player-row';
+
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = `${p.name}: ${p.score}`;
+    if (i === currentAnswerPlayer) nameSpan.classList.add('active');
+    div.appendChild(nameSpan);
+
+    // кнопка "+"
+    const plusBtn = document.createElement('button');
+    plusBtn.textContent = '+';
+    plusBtn.onclick = () => {
+      p.score += 100;
+      renderPlayers();
+    };
+    div.appendChild(plusBtn);
+
+    // кнопка "-"
+    const minusBtn = document.createElement('button');
+    minusBtn.textContent = '-';
+    minusBtn.onclick = () => {
+      p.score -= 100;
+      renderPlayers();
+    };
+    div.appendChild(minusBtn);
+
     playersDiv.appendChild(div);
   });
 }
+
+
 
 // ---------- Информация о вопросе ----------
 function updateQuestionInfo() {
