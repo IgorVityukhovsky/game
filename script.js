@@ -301,3 +301,15 @@ async function start() {
 }
 
 start();
+
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+fullscreenBtn.onclick = () => {
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => {
+      alert(`Ошибка при включении полноэкранного режима: ${err.message}`);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+};
