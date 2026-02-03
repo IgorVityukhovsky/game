@@ -257,3 +257,11 @@ td.used {
   background: linear-gradient(180deg, #7a522b, #3a1f0d);
 }
 
+/* Убираем вертикальную прокрутку */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-y: hidden; /* скрываем вертикальную прокрутку */
+  height: 100%;
+}
+
