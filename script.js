@@ -63,7 +63,7 @@ function renderBoard() {
   board.appendChild(table);
 }
 
-// ---------- Отрисовка игроков с кнопками + и - ----------
+// ---------- Отрисовка игроков ----------
 function renderPlayers() {
   playersDiv.innerHTML = '';
   players.forEach((p, i) => {
@@ -71,33 +71,40 @@ function renderPlayers() {
     div.className = 'player-row';
 
     const nameSpan = document.createElement('span');
-    nameSpan.textContent = `${p.name}: ${p.score}`;
+    nameSpan.className = 'name';
+    nameSpan.textContent = p.name;
     if (i === currentAnswerPlayer) nameSpan.classList.add('active');
     div.appendChild(nameSpan);
 
-    // кнопка "+"
+    const pointsSpan = document.createElement('span');
+    pointsSpan.className = 'points';
+    pointsSpan.textContent = p.score;
+    div.appendChild(pointsSpan);
+
+    const btnContainer = document.createElement('div');
+    btnContainer.className = 'buttons';
+
     const plusBtn = document.createElement('button');
     plusBtn.textContent = '+';
     plusBtn.onclick = () => {
       p.score += 100;
       renderPlayers();
     };
-    div.appendChild(plusBtn);
+    btnContainer.appendChild(plusBtn);
 
-    // кнопка "-"
     const minusBtn = document.createElement('button');
     minusBtn.textContent = '-';
     minusBtn.onclick = () => {
       p.score -= 100;
       renderPlayers();
     };
-    div.appendChild(minusBtn);
+    btnContainer.appendChild(minusBtn);
+
+    div.appendChild(btnContainer);
 
     playersDiv.appendChild(div);
   });
 }
-
-
 
 // ---------- Информация о вопросе ----------
 function updateQuestionInfo() {
@@ -121,7 +128,6 @@ function openQuestion(cat, index) {
 
   document.getElementById('questionText').textContent = questions[cat][index];
 
-  // ---------- Картинка ----------
   const imgPath = `Вопросы/Категории/${cat}/${index + 1}.png`;
   fetch(imgPath).then(res => {
     if(res.ok) {
@@ -139,6 +145,7 @@ function openQuestion(cat, index) {
   if (steal) steal.remove();
 
   updateQuestionInfo();
+  renderPlayers();
 }
 
 // ---------- Показ ответа ----------
@@ -150,7 +157,7 @@ async function showAnswer() {
   answerEl.style.display = 'block';
 }
 
-// ---------- Показ игроков для перехвата (с чекбоксами) ----------
+// ---------- Показ игроков для перехвата ----------
 function showStealPlayers() {
   const old = document.getElementById('stealPlayers');
   if (old) old.remove();
@@ -159,7 +166,6 @@ function showStealPlayers() {
   container.id = 'stealPlayers';
   container.innerHTML = '<h3>Кто отвечает?</h3>';
 
-  // Вариант "никто"
   const labelNone = document.createElement('label');
   const checkboxNone = document.createElement('input');
   checkboxNone.type = 'checkbox';
@@ -169,7 +175,6 @@ function showStealPlayers() {
   container.appendChild(labelNone);
   container.appendChild(document.createElement('br'));
 
-  // Остальные игроки, кто ещё не отвечал
   players.forEach((p, i) => {
     if (answeredPlayers.includes(i)) return;
 
@@ -202,9 +207,8 @@ function selectStealPlayer(container) {
   }
 
   if (checked.includes('none')) {
-    finish(false); // закрываем вопрос и вычитаем очки текущему игроку
+    finish(false);
   } else {
-    // Случайный выбор из нескольких
     const randomIndex = Math.floor(Math.random() * checked.length);
     currentAnswerPlayer = Number(checked[randomIndex]);
     answeredPlayers.push(currentAnswerPlayer);
@@ -246,7 +250,7 @@ function finish(correct) {
   renderPlayers();
 }
 
-// ---------- Кнопки ----------
+// ---------- Кнопки управления ----------
 document.getElementById('showAnswer').onclick = showAnswer;
 document.getElementById('correct').onclick = () => finish(true);
 document.getElementById('wrong').onclick = () => {
@@ -281,7 +285,7 @@ document.getElementById('back').onclick = () => {
 
 document.getElementById('newGame').onclick = () => start();
 
-// ---------- Старт ----------
+// ---------- Старт игры ----------
 async function start() {
   await loadPlayers();
   await loadQuestions();
