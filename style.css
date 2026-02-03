@@ -265,3 +265,12 @@ html, body {
   height: 100%;
 }
 
+/* === Аватар игрока === */
+#players .player-row img.avatar {
+  width: 60px;       /* размер аватара */
+  height: 60px;
+  border-radius: 50%; /* круглое фото */
+  border: 2px solid #d4af37;
+  object-fit: cover;  /* чтобы картинка не искажалась */
+  margin-bottom: 5px; /* отступ до имени */
+}

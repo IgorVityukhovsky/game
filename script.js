@@ -70,17 +70,27 @@ function renderPlayers() {
     const div = document.createElement('div');
     div.className = 'player-row';
 
+    // ---- Аватар ----
+    const img = document.createElement('img');
+    img.className = 'avatar';
+    img.src = `avatars/${p.name}.png`; // путь к картинке
+    img.onerror = () => img.src = 'avatars/default.png'; // если нет картинки, ставим заглушку
+    div.appendChild(img);
+
+    // ---- Имя ----
     const nameSpan = document.createElement('span');
     nameSpan.className = 'name';
     nameSpan.textContent = p.name;
     if (i === currentAnswerPlayer) nameSpan.classList.add('active');
     div.appendChild(nameSpan);
 
+    // ---- Очки ----
     const pointsSpan = document.createElement('span');
     pointsSpan.className = 'points';
     pointsSpan.textContent = p.score;
     div.appendChild(pointsSpan);
 
+    // ---- Кнопки ----
     const btnContainer = document.createElement('div');
     btnContainer.className = 'buttons';
 
@@ -105,6 +115,7 @@ function renderPlayers() {
     playersDiv.appendChild(div);
   });
 }
+
 
 // ---------- Информация о вопросе ----------
 function updateQuestionInfo() {
