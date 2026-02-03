@@ -5,8 +5,8 @@ let questions = {};
 let used = {};
 let players = [];
 
-let currentTurnPlayer = 0;
-let currentAnswerPlayer = 0;
+let currentTurnPlayer = 0;     // чей ход
+let currentAnswerPlayer = 0;   // кто отвечает сейчас
 let currentQuestion = null;
 
 let awaitingSteal = false;
@@ -99,7 +99,7 @@ function openQuestion(cat, index) {
   // ---------- Картинка ----------
   const imgPath = `Вопросы/Категории/${cat}/${index + 1}.png`;
   fetch(imgPath).then(res => {
-    if (res.ok) {
+    if(res.ok) {
       questionImage.src = imgPath;
       questionImage.style.display = 'block';
     } else {
@@ -125,7 +125,7 @@ async function showAnswer() {
   answerEl.style.display = 'block';
 }
 
-// ---------- Показ игроков для перехвата ----------
+// ---------- Показ игроков для перехвата (с чекбоксами) ----------
 function showStealPlayers() {
   const old = document.getElementById('stealPlayers');
   if (old) old.remove();
@@ -136,27 +136,24 @@ function showStealPlayers() {
 
   // Вариант "никто"
   const labelNone = document.createElement('label');
-  const radioNone = document.createElement('input');
-  radioNone.type = 'radio';
-  radioNone.name = 'steal';
-  radioNone.value = 'none';
-  radioNone.checked = true;
-  labelNone.appendChild(radioNone);
+  const checkboxNone = document.createElement('input');
+  checkboxNone.type = 'checkbox';
+  checkboxNone.value = 'none';
+  labelNone.appendChild(checkboxNone);
   labelNone.append(' Никто');
   container.appendChild(labelNone);
   container.appendChild(document.createElement('br'));
 
-  // Остальные игроки
+  // Остальные игроки, кто ещё не отвечал
   players.forEach((p, i) => {
     if (answeredPlayers.includes(i)) return;
 
     const label = document.createElement('label');
-    const radio = document.createElement('input');
-    radio.type = 'radio';
-    radio.name = 'steal';
-    radio.value = i;
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = i;
 
-    label.appendChild(radio);
+    label.appendChild(checkbox);
     label.append(` ${p.name}`);
     container.appendChild(label);
     container.appendChild(document.createElement('br'));
@@ -165,24 +162,26 @@ function showStealPlayers() {
   const btn = document.createElement('button');
   btn.textContent = 'Выбрать';
   btn.onclick = () => selectStealPlayer(container);
-
   container.appendChild(btn);
+
   questionScreen.appendChild(container);
 }
 
-// ---------- Выбор игрока ----------
+// ---------- Выбор игрока для перехвата ----------
 function selectStealPlayer(container) {
-  const selected = container.querySelector('input[name="steal"]:checked');
-  if (!selected) {
-    alert('Выберите вариант');
+  const checked = [...container.querySelectorAll('input:checked')].map(i => i.value);
+
+  if (checked.length === 0) {
+    alert('Выберите хотя бы одного игрока или "никто"');
     return;
   }
 
-  if (selected.value === 'none') {
-    awaitingSteal = false;
-    finish(false);
+  if (checked.includes('none')) {
+    finish(false); // закрываем вопрос и вычитаем очки текущему игроку
   } else {
-    currentAnswerPlayer = Number(selected.value);
+    // Случайный выбор из нескольких
+    const randomIndex = Math.floor(Math.random() * checked.length);
+    currentAnswerPlayer = Number(checked[randomIndex]);
     answeredPlayers.push(currentAnswerPlayer);
     awaitingSteal = true;
   }
