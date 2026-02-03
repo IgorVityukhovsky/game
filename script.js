@@ -5,17 +5,18 @@ let questions = {};
 let used = {};
 let players = [];
 
-let currentTurnPlayer = 0;     // чей ход
-let currentAnswerPlayer = 0;   // кто отвечает сейчас
+let currentTurnPlayer = 0;
+let currentAnswerPlayer = 0;
 let currentQuestion = null;
 
 let awaitingSteal = false;
-let answeredPlayers = [];     // кто уже отвечал на вопрос
+let answeredPlayers = [];
 
 const board = document.getElementById('gameBoard');
 const playersDiv = document.getElementById('players');
 const questionScreen = document.getElementById('questionScreen');
 const answerEl = document.getElementById('answer');
+const questionImage = document.getElementById('questionImage');
 
 // ---------- Загрузка игроков ----------
 async function loadPlayers() {
@@ -94,13 +95,25 @@ function openQuestion(cat, index) {
   board.classList.add('hidden');
 
   document.getElementById('questionText').textContent = questions[cat][index];
-  updateQuestionInfo();
+
+  // ---------- Картинка ----------
+  const imgPath = `Вопросы/Категории/${cat}/${index + 1}.png`;
+  fetch(imgPath).then(res => {
+    if (res.ok) {
+      questionImage.src = imgPath;
+      questionImage.style.display = 'block';
+    } else {
+      questionImage.style.display = 'none';
+    }
+  });
 
   answerEl.textContent = '';
   answerEl.style.display = 'none';
 
   const steal = document.getElementById('stealPlayers');
   if (steal) steal.remove();
+
+  updateQuestionInfo();
 }
 
 // ---------- Показ ответа ----------
@@ -133,7 +146,7 @@ function showStealPlayers() {
   container.appendChild(labelNone);
   container.appendChild(document.createElement('br'));
 
-  // Остальные игроки, кто ещё не отвечал
+  // Остальные игроки
   players.forEach((p, i) => {
     if (answeredPlayers.includes(i)) return;
 
@@ -166,9 +179,8 @@ function selectStealPlayer(container) {
   }
 
   if (selected.value === 'none') {
-    // Никто не отвечает — закрываем вопрос сразу, порядок игроков останется корректным
     awaitingSteal = false;
-    finish(false); // автоматическое закрытие и пометка вопроса
+    finish(false);
   } else {
     currentAnswerPlayer = Number(selected.value);
     answeredPlayers.push(currentAnswerPlayer);
@@ -191,17 +203,14 @@ function finish(correct) {
     players[currentAnswerPlayer].score += pts;
   }
 
-  // помечаем вопрос как использованный
   used[cat][index] = true;
 
-  // ход переходит по очереди
   currentTurnPlayer = (currentTurnPlayer + 1) % players.length;
-
-  // текущий отвечающий теперь совпадает с игроком, чей ход следующий
   currentAnswerPlayer = currentTurnPlayer;
 
   questionScreen.classList.remove('active');
   board.classList.remove('hidden');
+  questionImage.style.display = 'none';
 
   awaitingSteal = false;
   currentQuestion = null;
@@ -215,18 +224,13 @@ function finish(correct) {
 
 // ---------- Кнопки ----------
 document.getElementById('showAnswer').onclick = showAnswer;
-
 document.getElementById('correct').onclick = () => finish(true);
-
 document.getElementById('wrong').onclick = () => {
   if (!currentQuestion) return;
 
   const { index } = currentQuestion;
-
-  // штраф текущему игроку
   players[currentAnswerPlayer].score -= POINTS[index];
 
-  // ищем, кто ещё не отвечал
   const remaining = players
     .map((_, i) => i)
     .filter(i => !answeredPlayers.includes(i));
@@ -244,6 +248,7 @@ document.getElementById('back').onclick = () => {
   board.classList.remove('hidden');
   answerEl.textContent = '';
   answerEl.style.display = 'none';
+  questionImage.style.display = 'none';
   awaitingSteal = false;
 
   const steal = document.getElementById('stealPlayers');
