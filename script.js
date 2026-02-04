@@ -109,7 +109,7 @@ function renderPlayers() {
       renderPlayers();
     };
     btnContainer.appendChild(minusBtn);
-
+    setupAvatarHover(img);
     div.appendChild(btnContainer);
 
     playersDiv.appendChild(div);
@@ -324,3 +324,22 @@ fullscreenBtn.onclick = () => {
     document.exitFullscreen();
   }
 };
+
+let avatarTimer = null;
+
+const avatarFullscreen = document.getElementById('avatarFullscreen');
+const avatarFullscreenImg = document.getElementById('avatarFullscreenImg');
+
+function setupAvatarHover(img) {
+  img.addEventListener('mouseenter', () => {
+    avatarTimer = setTimeout(() => {
+      avatarFullscreenImg.src = img.src;
+      avatarFullscreen.classList.add('active');
+    }, 1000); // 1 секунда
+  });
+
+  img.addEventListener('mouseleave', () => {
+    clearTimeout(avatarTimer);
+    avatarFullscreen.classList.remove('active');
+  });
+}

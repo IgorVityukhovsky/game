@@ -7,27 +7,36 @@
 </head>
 <body>
 
-<h1>Своя Игра</h1>
+  <h1>Своя Игра</h1>
 
-<button id="newGame">Новая игра</button>
-<button id="fullscreenBtn">Fullscreen</button>
+  <button id="newGame">Новая игра</button>
+  <button id="fullscreenBtn">Fullscreen</button>
 
-<div id="gameBoard"></div>
-<div id="players"></div>
+  <div id="gameBoard"></div>
+  <div id="players"></div>
 
-<div id="questionScreen">
-  <div id="questionCard">
-    <div id="questionText"></div>
-    <img id="questionImage" style="display:none; margin-top:10px; max-height:500px;">
-    <div id="questionPoints"></div>
-    <div id="answer"></div>
-    <button id="showAnswer">Показать ответ</button>
-    <button id="correct">Верно</button>
-    <button id="wrong">Неверно</button>
-    <button id="back">Назад</button>
+  <!-- Экран вопроса -->
+  <div id="questionScreen">
+    <div id="questionCard">
+      <div id="questionText"></div>
+      <img id="questionImage" style="display:none; margin-top:10px; max-height:500px;">
+      <div id="questionPoints"></div>
+      <div id="answer"></div>
+
+      <button id="showAnswer">Показать ответ</button>
+      <button id="correct">Верно</button>
+      <button id="wrong">Неверно</button>
+      <button id="back">Назад</button>
+    </div>
   </div>
-</div>
 
-<script src="script.js"></script>
+  <!-- Полноэкранный просмотр аватара -->
+  <div id="avatarFullscreen">
+    <img id="avatarFullscreenImg">
+  </div>
+
+  <!-- Скрипт ВСЕГДА в самом конце -->
+  <script src="script.js"></script>
+
 </body>
 </html>
