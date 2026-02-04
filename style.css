@@ -303,3 +303,12 @@ html, body {
     0 0 40px rgba(255, 215, 0, 0.6),
     0 0 80px rgba(255, 200, 120, 0.4);
 }
+
+/* === Подсветка аватара активного игрока === */
+#players .player-row img.avatar.active {
+  border-color: #ffff70; /* ярко-жёлтая */
+  box-shadow:
+    0 0 12px rgba(255,255,112,0.9),
+    0 0 25px rgba(255,255,150,0.6);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
