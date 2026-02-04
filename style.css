@@ -41,29 +41,35 @@ button:hover {
 #gameBoard {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 30px;          /* таблица чуть выше */
+  pointer-events: auto;
 }
 
-/* === ТАБЛИЦА === */
-table {
+/* === ТАБЛИЦА С ВОПРОСАМИ === */
+#gameBoard table {
+  width: 75%;                /* занимает 75% ширины экрана */
+  max-width: 1200px;         /* ограничение для больших экранов */
   border-collapse: collapse;
-  background: rgba(30, 18, 10, 0.85);
+  background: rgba(30, 18, 10, 0.85);  /* фон как в оригинале */
+  border: 3px solid #7a5a2a;
   box-shadow:
     0 0 40px rgba(0,0,0,0.8),
     inset 0 0 30px rgba(255,200,120,0.08);
-  border: 3px solid #7a5a2a;
+  font-family: "Arial", "Helvetica", sans-serif; /* читаемый шрифт */
 }
 
 /* === ЯЧЕЙКИ === */
 td {
-  min-width: 90px;
-  height: 60px;
+  min-width: 100px;          /* чуть шире */
+  height: 70px;              /* чуть выше */
   border: 1px solid #7a5a2a;
   text-align: center;
-  font-size: 22px;
+  font-size: 22px;           /* размер шрифта прежний */
+  font-weight: bold;
   color: #f6d98b;
   cursor: pointer;
   text-shadow: 0 0 5px rgba(255,200,120,0.5);
+  transition: all 0.2s;
 }
 
 /* === КАТЕГОРИИ === */
@@ -88,6 +94,7 @@ td.used {
   cursor: default;
   text-shadow: none;
 }
+
 
 /* ====== ФИКС КЛИКАБЕЛЬНОСТИ ====== */
 #board td {
